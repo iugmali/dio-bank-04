@@ -12,17 +12,16 @@ export function makeMockResponse<TResult>() {
       state: {
       }
     } as MockResponse<TResult>;
-  
+
     response.status = (status: number) => {
       response.state.status = status;
       return response;
     };
-  
+
     response.json = (json: TResult) => {
       response.state.json = json;
       return response;
     };
-  
+
     return response;
-  }
-  
+}

@@ -5,7 +5,7 @@ export const makeMockRequest = ({ params, query }: { params?: Params, query?: Pa
     const request = {
         params: params || { },
         query: query || { }
-    } as unknown
+    } as unknown;
 
-    return request as Request
+    return request as Request;
 }
