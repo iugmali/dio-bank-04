@@ -1,72 +1,84 @@
 import { UserController } from "./UserController";
-import { UserService } from '../services/UserService'
 import { Request } from 'express'
 import { makeMockResponse } from "../__mocks__/mockResponse.mock";
 import {makeMockRequest} from "../__mocks__/mockRequest.mock";
 
-describe('UserController', () => {
-    const mockUserService: Partial<UserService> = {
-        createUser: jest.fn(),
-        getAllUsers: jest.fn(),
-        deleteUser: jest.fn()
-    }
+const mockUserService = {
+    createUser: jest.fn(),
+    getUser: jest.fn()
+};
+jest.mock('../services/UserService', () => {
+    return {
+        UserService: jest.fn().mockImplementation(() => {
+            return mockUserService;
+        })
+    };
+})
 
-    const userController = new UserController(mockUserService as UserService);
+describe('UserController', () => {
+    const userController = new UserController();
+    const mockResponse = makeMockResponse();
 
     it('Deve adicionar um novo usuário', () => {
         const mockRequest = {
             body: {
                 name: 'Guilherme',
-                email: 'dev@iugmali.com'
+                email: 'dev@iugmali.com',
+                password: 'toor'
             }
         } as Request;
-        const mockResponse = makeMockResponse();
         userController.createUser(mockRequest, mockResponse);
         expect(mockResponse.state.status).toBe(201);
         expect(mockResponse.state.json).toMatchObject({ message: 'Usuário criado' });
     });
 
-    it('Deve verificar se existe o campo name ao criar usuário', () => {
+    it('Deve retornar erro caso o usuário não passe o campo name', () => {
         const mockRequest = {
             body: {
-                email: 'dev@iugmali.com'
+                name: '',
+                email: 'dev@iugmali.com',
+                password: 'toor'
             }
         } as Request;
-        const mockResponse = makeMockResponse();
         userController.createUser(mockRequest, mockResponse);
         expect(mockResponse.state.status).toBe(400);
-        expect(mockResponse.state.json).toMatchObject({ message: 'Bad request! Name obrigatório' });
+        expect(mockResponse.state.json).toMatchObject({ message: 'Bad request! Todos os campos são obrigatórios.' });
     });
 
-    it('Deve verificar se existe o campo email ao criar usuário', () => {
-        const mockRequest = {
-            body: {
-                name: 'Guilherme'
-            }
-        } as Request;
-        const mockResponse = makeMockResponse();
-        userController.createUser(mockRequest, mockResponse);
-        expect(mockResponse.state.status).toBe(400);
-        expect(mockResponse.state.json).toMatchObject({ message: 'Bad request! Email obrigatório' });
-    });
-
-    it('Deve retornar status 200 ao chamar todos os usuários', () => {
-        const mockRequest = {} as Request;
-        const mockResponse = makeMockResponse();
-        userController.getAllUsers(mockRequest, mockResponse);
-        expect(mockResponse.state.status).toBe(200);
-    });
-
-    it('Deve deletar usuário', () => {
+    it('Deve retornar erro caso o usuário não passe o campo email', () => {
         const mockRequest = {
             body: {
                 name: 'Guilherme',
-                email: 'dev@iugmali.com'
+                email: '',
+                password: 'toor'
             }
         } as Request;
-        const mockResponse = makeMockResponse();
-        userController.deleteUser(mockRequest, mockResponse);
+        userController.createUser(mockRequest, mockResponse);
+        expect(mockResponse.state.status).toBe(400);
+        expect(mockResponse.state.json).toMatchObject({ message: 'Bad request! Todos os campos são obrigatórios.' });
+    });
+
+    it('Deve retornar erro caso o usuário nao informe o password', () => {
+        const mockRequest = {
+            body: {
+                name: 'Guilherme',
+                email: 'dev@iugmali.com',
+                password: ''
+            }
+        } as Request;
+        userController.createUser(mockRequest, mockResponse);
+        expect(mockResponse.state.status).toBe(400);
+        expect(mockResponse.state.json).toMatchObject({ message: 'Bad request! Todos os campos são obrigatórios.' });
+    });
+
+    it('Deve retornar o usuário com o userId informado', () => {
+        const mockRequest = makeMockRequest({
+            params: {
+                userId: '123456'
+            }
+        })
+        userController.getUser(mockRequest, mockResponse);
+        expect(mockUserService.getUser).toHaveBeenCalledWith('123456');
         expect(mockResponse.state.status).toBe(200);
-        expect(mockResponse.state.json).toMatchObject({ message: 'Usuário deletado' });
     });
 })

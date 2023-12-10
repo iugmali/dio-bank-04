@@ -1,10 +1,14 @@
-import { Router, Request, Response } from 'express'
-import { UserController } from './controllers/UserController'
+import { Router, Request, Response } from 'express';
+import { UserController } from './controllers/UserController';
+import {LoginController} from "./controllers/LoginController";
+import {verifyAuth} from "./middleware/verifyAuth";
 
-export const router = Router()
+export const router = Router();
 
-const userController = new UserController()
+const userController = new UserController();
+const loginController = new LoginController();
 
-router.post('/user', userController.createUser)
-router.get('/user', userController.getAllUsers)
-router.delete('/user', userController.deleteUser)
+router.post('/user', userController.createUser);
+router.get('/user/:userId', verifyAuth, userController.getUser);
+
+router.post('/login', loginController.login);

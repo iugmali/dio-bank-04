@@ -1,0 +1,37 @@
+GET http://localhost:5005/user
+
+###
+
+POST http://localhost:5005/user
+Content-Type: application/json
+
+{
+    "name" : "Guilherme",
+    "email": "iugmali@hotmail.com",
+    "password": "toor"
+}
+
+###
+
+GET http://localhost:5005/user/1e7aa939-a15b-411a-aa22-8965ec64b048
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR3VpbGhlcm1lIiwiZW1haWwiOiJkZXZAaXVnbWFsaS5jb20iLCJpYXQiOjE2ODc5OTk2MTQsInN1YiI6ImQ5ZGExYzc0LWFlNmEtNGI5Mi04MmZhLTVjYzlhN2FiM2Y0ZCJ9.FAbfZYZih4125O8DQH9GTo-dVOA6ecLrYdSqEZI8IsQ
+
+###
+
+POST http://localhost:5005/login
+Content-Type: application/json
+
+{
+  "email": "dev@iugmali.com",
+  "password": "toor"
+}
+
+###
+
+POST http://localhost:5005/login
+Content-Type: application/json
+
+{
+"email": "dev@iugmali.com",
+"password": "root"
+}
